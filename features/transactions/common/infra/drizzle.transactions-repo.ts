@@ -1,13 +1,21 @@
-import {transactions} from '@/common/infra/drizzle/drizzle-schema';
-import {TransactionsRepo} from './transactions-repo';
 import {drizzleDB} from '@/common/infra/drizzle/drizzle-db';
+import {transactions} from '@/common/infra/drizzle/drizzle.schema';
+import {TransactionsRepo} from './transactions-repo';
 import {eq} from 'drizzle-orm';
 
 export const makeDrizzleTransactionsRepo = (): TransactionsRepo => ({
-    findAllTransactions() {
-        return drizzleDB.query.transactions.findMany({
-            orderBy: (transactions, {desc}) => [desc(transactions.id)],
-        });
+    async findAllTransactions() {
+        return (
+            await drizzleDB.query.transactions.findMany({
+                orderBy: (transactions, {desc}) => [desc(transactions.id)],
+                with: {tagsToTransactions: {with: {tag: true}}},
+            })
+        ).map((foundTransaction) => ({
+            ...foundTransaction,
+            tags: foundTransaction.tagsToTransactions.map(
+                (tagToTransaction) => tagToTransaction.tag,
+            ),
+        }));
     },
 
     async createTransaction(input) {
@@ -38,11 +46,10 @@ export const makeDrizzleTransactionsRepo = (): TransactionsRepo => ({
             );
         }
 
-        return deletedTransaction;
+        return {...deletedTransaction, tags: input.tags};
     },
 
     async updateTransaction(input) {
-        // const updatedTransaction = await drizzleDB.update(transactions).set;
         const updatedTransacion = (
             await drizzleDB
                 .update(transactions)
@@ -59,6 +66,6 @@ export const makeDrizzleTransactionsRepo = (): TransactionsRepo => ({
                 `An error occured while updating the transaction.\n{"transaction": ${input}}`,
             );
         }
-        return updatedTransacion;
+        return {...updatedTransacion, tags: input.tags};
     },
 });
