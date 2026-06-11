@@ -12,82 +12,49 @@ import {makeDeleteTransactionUseCase} from '@/features/transactions/features/del
 import {makeFindAllTransactionsUseCase} from '@/features/transactions/features/find-all-transactions/find-all-transactions.use-case';
 import {makeFindBalanceUseCase} from '@/features/transactions/features/find-balance/find-balance.use-case';
 import {makeUpdateTransactionUseCase} from '@/features/transactions/features/update-transaction/update-transaction.use-case';
-import {asFunction, createContainer} from 'awilix';
-
-const depNames = {
-    // Transactions
-    // Repos
-    TRANSACTIONS_REPO: 'transactionsRepo',
-    // Use cases
-    CREATE_TRANSACTION_USE_CASE: 'createTransactionUseCase',
-    FIND_ALL_TRANSACTIONS_USE_CASE: 'findAllTransactionsUseCase',
-    DELETE_TRANSACTION_USE_CASE: 'deleteTransactionUseCase',
-    FIND_BALANCE_USE_CASE: 'findBalanceUseCase',
-    UPDATE_TRANSACTION_USE_CASE: 'updateTransactionUseCase',
-
-    // Tags
-    // Repos
-    TAGS_REPO: 'tagsRepo',
-    // Use cases
-    CREATE_TAG_USE_CASE: 'createTagUseCase',
-    RELATE_TAG_TO_TRANSACTION_USE_CASE: 'relateTagToTransactionUseCase',
-    CREATE_TAGS_USE_CASE: 'createTagsUseCase',
-    RELATE_TAGS_TO_TRANSACTION_USE_CASE: 'relateTagsToTransactionUseCase',
-    FIND_TAGS_BY_VALUE_OR_CREATE_USE_CASE: 'findTagsByValueOrCreateUseCase',
-    UNRELATE_TAG_TO_TRANSACTION_USE_CASE: 'unrelateTagToTransactionUseCase',
-    UNRELATE_TAGS_TO_TRANSACTION_USE_CASE: 'unrelateTagsToTransactionUseCase',
-} as const;
-export type DepNames = (typeof depNames)[keyof typeof depNames];
+import {asFunction} from 'awilix';
+import {createTypedContainer} from './awilix';
+import {Dependencies} from './dependencies';
 
 export const makeDepsContainer = () => {
-    const container = createContainer({strict: true});
+    const container = createTypedContainer<Dependencies>({strict: true});
 
     // Transactions
     // Repos
     container.register({
-        [depNames.TRANSACTIONS_REPO]: asFunction(
-            makeDrizzleTransactionsRepo,
-        ).singleton(),
+        transactionsRepo: asFunction(makeDrizzleTransactionsRepo).singleton(),
     });
     // Use cases
     container.register({
-        [depNames.CREATE_TRANSACTION_USE_CASE]: asFunction(
-            makeCreateTransactionUseCase,
-        ),
-        [depNames.FIND_ALL_TRANSACTIONS_USE_CASE]: asFunction(
-            makeFindAllTransactionsUseCase,
-        ),
-        [depNames.DELETE_TRANSACTION_USE_CASE]: asFunction(
-            makeDeleteTransactionUseCase,
-        ),
-        [depNames.FIND_BALANCE_USE_CASE]: asFunction(makeFindBalanceUseCase),
-        [depNames.UPDATE_TRANSACTION_USE_CASE]: asFunction(
-            makeUpdateTransactionUseCase,
-        ),
+        createTransactionUseCase: asFunction(makeCreateTransactionUseCase),
+        findAllTransactionsUseCase: asFunction(makeFindAllTransactionsUseCase),
+        deleteTransactionUseCase: asFunction(makeDeleteTransactionUseCase),
+        findBalanceUseCase: asFunction(makeFindBalanceUseCase),
+        updateTransactionUseCase: asFunction(makeUpdateTransactionUseCase),
     });
 
     // Tags
     // Repos
     container.register({
-        [depNames.TAGS_REPO]: asFunction(makeDrizzleTagsRepo).singleton(),
+        tagsRepo: asFunction(makeDrizzleTagsRepo).singleton(),
     });
     // Use cases
     container.register({
-        [depNames.CREATE_TAG_USE_CASE]: asFunction(makeCreateTagUseCase),
-        [depNames.RELATE_TAG_TO_TRANSACTION_USE_CASE]: asFunction(
+        createTagUseCase: asFunction(makeCreateTagUseCase),
+        relateTagToTransactionUseCase: asFunction(
             makeRelateTagToTransactionUseCase,
         ),
-        [depNames.CREATE_TAGS_USE_CASE]: asFunction(makeCreateTagsUseCase),
-        [depNames.RELATE_TAGS_TO_TRANSACTION_USE_CASE]: asFunction(
+        createTagsUseCase: asFunction(makeCreateTagsUseCase),
+        relateTagsToTransactionUseCase: asFunction(
             makeRelateTagsToTransactionUseCase,
         ),
-        [depNames.FIND_TAGS_BY_VALUE_OR_CREATE_USE_CASE]: asFunction(
+        findTagsByValueOrCreateUseCase: asFunction(
             makeFindTagsByValueOrCreateUseCase,
         ),
-        [depNames.UNRELATE_TAG_TO_TRANSACTION_USE_CASE]: asFunction(
+        unrelateTagToTransactionUseCase: asFunction(
             makeUnrelateTagToTransactionUseCase,
         ),
-        [depNames.UNRELATE_TAGS_TO_TRANSACTION_USE_CASE]: asFunction(
+        unrelateTagsToTransactionUseCase: asFunction(
             makeUnrelateTagsToTransactionUseCase,
         ),
     });
