@@ -19,7 +19,7 @@ export default function Index() {
         if (!appbarContext || balance === undefined) {
             return;
         }
-        appbarContext.setTitle(balance.toString());
+        appbarContext.setTitle(`Balance: ${balance.toFixed(2)}`);
     }, [appbarContext, balance]);
 
     return (
