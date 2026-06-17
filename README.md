@@ -143,8 +143,44 @@ module.exports = {
 - **Arrow functions**: Always use parentheses (`(x) => x`)
 - **Brackets**: No space inside (`{a}` not `{ a }`), same line for opening bracket
 - **Linter**: Expo lint (ESLint) via `npm run lint`
+- **Guard clauses**: Prefer early returns over else blocks. Check for nullish/edge cases first and `return` immediately to reduce nesting and improve readability.
+- **Functional patterns**: Prefer array methods, optional chaining (`?.`), and nullish coalescing (`??`) over imperative loops when it improves conciseness and readability. Use imperative approaches when functional patterns would decrease clarity.
 
-### 8. Testing & Accessibility
+### 8. Custom Hook Naming Convention
+
+**File naming:** Use kebab-case with `use-` prefix describing the **action**, not the entity.
+
+**Hook naming:** Use camelCase with `use` prefix describing the **action**.
+
+The file name and hook name should clearly indicate **what the hook does**, not just what it relates to.
+
+✅ **Good** - Action-oriented:
+```typescript
+// File: use-navigate-to-tag.ts
+import {useNavigateToTag} from '@/features/tags/common/hooks/use-navigate-to-tag';
+const {navigateToTag} = useNavigateToTag();
+```
+
+**Hook Placement Convention:**
+- **Feature-specific hooks**: Place in `features/{feature}/features/{use-case}/use-*.ts` when used by only one sub-feature
+- **Cross-feature hooks**: Place in `features/{entity}/common/hooks/use-*.ts` when used across multiple sub-features
+
+Example: `useNavigateToTag` is used by both transaction list and tag filter screens, so it lives in `features/tags/common/hooks/` rather than within a specific transaction feature.
+
+❌ **Avoid** - Entity-oriented:
+```typescript
+// File: use-tag-navigation.ts  (what is it for? too vague)
+import {useTagNavigation} from './use-tag-navigation';
+const {navigateToTag} = useTagNavigation(); // hook name doesn't match action
+```
+
+**Rationale:**
+- `useNavigateToTag` clearly states the hook's purpose (navigation to a tag)
+- The file name `use-navigate-to-tag.ts` mirrors the hook name
+- Avoid naming hooks after entities (e.g., `useTag`, `useUser`) - prefer action-based names
+- This makes the codebase more discoverable and self-documenting
+
+### 9. Testing & Accessibility
 
 **For e2e testing (Detox & Maestro):**
 

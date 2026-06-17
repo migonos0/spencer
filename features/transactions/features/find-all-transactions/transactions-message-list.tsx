@@ -1,4 +1,5 @@
 import {FlatList} from 'react-native';
+import {useNavigateToTag} from '@/features/tags/common/hooks/use-navigate-to-tag';
 import {useTransactions} from './use-transactions';
 import {TransactionCard} from '@/common/components/transaction-card';
 import {Transaction} from '../../domain/transaction';
@@ -23,6 +24,7 @@ export const TransactionsMessageList: FC<TransactionsMessageListProps> = ({
     expenseTransactionCardColor,
     incomeTransactionCardColor,
 }) => {
+    const {navigateToTag} = useNavigateToTag();
     const {transactions} = useTransactions();
     const {removeTransaction} = useBalance();
     const {deleteTransaction} = useDeleteTransaction();
@@ -106,6 +108,7 @@ export const TransactionsMessageList: FC<TransactionsMessageListProps> = ({
                         body={transaction.description}
                         tags={transaction.tags?.map((tag) => ({
                             label: tag.value,
+                            onPress: () => navigateToTag(tag.id),
                         }))}
                     />
                 )}
