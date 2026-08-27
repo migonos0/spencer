@@ -1,5 +1,6 @@
+import {createTypedContainer} from '@/common/infra/awilix';
+import {Dependencies} from '@/common/infra/dependencies';
 import {makeDepsContainer} from '@/common/infra/deps-container';
-import {AwilixContainer} from 'awilix';
 import {
     FC,
     ReactNode,
@@ -13,7 +14,7 @@ type DepsContextActions = {
     disposeCachedDependencies: () => void;
 };
 export const DepsContext = createContext<{
-    depsContainer: AwilixContainer;
+    depsContainer: ReturnType<typeof createTypedContainer<Dependencies>>;
     version: number;
     actions: DepsContextActions;
 } | null>(null);
