@@ -2,12 +2,12 @@ import {useMemo, useRef} from 'react';
 import {useDepsContext} from './use-deps-context';
 import {Dependencies} from '../infra/dependencies';
 
-export const useDependency = <T = unknown>(
-    dependencyName: keyof Dependencies,
-): T => {
+export const useDependency = <T extends keyof Dependencies>(
+    dependencyName: T,
+) => {
     const {depsContainer, version: containerVersion} = useDepsContext();
     const dependencyVersion = useRef<number>(undefined);
-    const cachedDependency = useRef<T>(undefined);
+    const cachedDependency = useRef<Dependencies[T]>(undefined);
 
     const dependency = useMemo(() => {
         if (dependencyVersion.current === undefined) {
